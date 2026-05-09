@@ -1,0 +1,17 @@
+.requireLogin { min-height: 60vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; }
+.requireLogin h2 { font-family: 'Playfair Display', serif; font-size: 28px; }
+.profileHeader { display: flex; align-items: center; gap: 16px; padding: 20px; background: white; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 24px; flex-wrap: wrap; }
+.avatarLarge { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--pink), var(--soft-purple)); color: white; font-size: 26px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.profileName { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; }
+.profileEmail { font-size: 14px; color: var(--text-muted); }
+.logoutBtn { margin-left: auto; display: flex; align-items: center; gap: 6px; padding: 10px 18px; border: 1.5px solid #ffd6d6; border-radius: var(--radius-sm); background: white; color: #e8527f; font-size: 14px; font-weight: 600; cursor: pointer; transition: var(--transition); }
+.logoutBtn:hover { background: #fff0f4; }
+.tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 24px; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tabBtn { display: flex; align-items: center; gap: 6px; padding: 10px 18px; border: 1.5px solid var(--border); border-radius: 50px; font-size: 13px; font-weight: 600; color: var(--text-muted); white-space: nowrap; transition: var(--transition); }
+.tabBtn:hover { border-color: var(--pink); color: var(--pink); }
+.tabActive { background: var(--light-pink); border-color: var(--pink); color: var(--pink); }
+.content { min-height: 300px; }
+.emptyState { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 60px 20px; text-align: center; }
+.emptyState h3 { font-family: 'Playfair Display', serif; font-size: 22px; }
+.emptyState p { color: var(--text-muted); font-size: 14px; }

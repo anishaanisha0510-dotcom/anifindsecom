@@ -1,0 +1,102 @@
+.footer {
+  background: #1a1a1a;
+  color: rgba(255,255,255,0.7);
+  margin-top: 40px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  padding: 48px 16px;
+}
+@media(min-width: 640px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@media(min-width: 1024px) { .grid { grid-template-columns: 1.5fr 1fr 1fr 1fr; } }
+
+.brand {}
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 400;
+  color: white;
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 4px;
+}
+.tagline {
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 16px;
+}
+.desc {
+  font-size: 13px;
+  line-height: 1.8;
+  color: rgba(255,255,255,0.55);
+  max-width: 240px;
+  margin-bottom: 20px;
+}
+.socials { display: flex; gap: 8px; }
+.socialIcon {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.6);
+  transition: all 0.25s ease;
+}
+.socialIcon:hover { border-color: white; color: white; }
+
+.col {}
+.colTitle {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: white;
+  margin-bottom: 18px;
+}
+.links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.link {
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  transition: all 0.25s ease;
+}
+.link:hover { color: white; padding-left: 4px; }
+
+.contacts { display: flex; flex-direction: column; gap: 12px; }
+.contactItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: rgba(255,255,255,0.55);
+  transition: all 0.25s ease;
+}
+.contactItem:hover { color: white; }
+
+.bottom {
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 0;
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.bottomLinks { display: flex; gap: 24px; }
+.bottomLink {
+  font-size: 12px;
+  color: rgba(255,255,255,0.35);
+  transition: all 0.25s ease;
+}
+.bottomLink:hover { color: white; }

@@ -1,0 +1,207 @@
+.header {
+  background: white;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: var(--text-dark);
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.logoText {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 1px;
+  color: var(--text-dark);
+}
+.logoSub {
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: -2px;
+}
+
+/* Icon buttons */
+.iconBtn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-dark);
+  border-radius: 50%;
+  transition: var(--transition);
+}
+.iconBtn:hover { background: #f5f5f5; }
+
+.rightIcons { display: flex; align-items: center; gap: 2px; }
+
+.badge {
+  position: absolute;
+  top: 2px; right: 2px;
+  background: var(--pink);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid white;
+}
+
+/* Desktop nav */
+.desktopNav {
+  display: none;
+  justify-content: center;
+  gap: 32px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+}
+@media(min-width: 768px) { .desktopNav { display: flex; } }
+
+.navLink {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-mid);
+  transition: var(--transition);
+  padding: 4px 0;
+  border-bottom: 1.5px solid transparent;
+}
+.navLink:hover { color: var(--text-dark); border-bottom-color: var(--text-dark); }
+
+/* Search */
+.searchBar {
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  background: white;
+}
+.searchInner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #f7f7f7;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+}
+.searchInner input {
+  flex: 1; border: none; background: transparent; font-size: 14px; padding: 0;
+  color: var(--text-dark);
+}
+.searchClose {
+  background: none; border: none; cursor: pointer; color: var(--text-muted);
+  display: flex; align-items: center;
+}
+
+/* Drawer */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 300;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.drawer {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  width: 280px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease;
+}
+@keyframes slideIn { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.drawerHeader .logo {
+  position: static;
+  transform: none;
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.drawerNav {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+  flex: 1;
+  gap: 2px;
+}
+
+.drawerLink {
+  padding: 13px 0;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-dark);
+  border-bottom: 1px solid var(--border);
+  transition: var(--transition);
+  letter-spacing: 0.3px;
+}
+.drawerLink:hover { color: var(--pink); padding-left: 6px; }
+
+.drawerDivider { height: 1px; background: var(--border); margin: 12px 0; }
+
+.drawerLogout {
+  background: none; border: none; color: var(--text-muted);
+  font-size: 14px; cursor: pointer; text-align: left; padding: 12px 0;
+  transition: var(--transition);
+}
+.drawerLogout:hover { color: var(--pink); }
+
+.drawerLoginBtn {
+  display: block;
+  background: var(--text-dark);
+  color: white;
+  padding: 13px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 12px;
+  transition: var(--transition);
+}
+.drawerLoginBtn:hover { background: var(--pink); }
+
+.drawerFooter {
+  padding: 20px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.igLink { color: var(--text-dark); font-weight: 600; font-size: 14px; }

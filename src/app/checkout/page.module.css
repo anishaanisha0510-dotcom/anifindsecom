@@ -1,0 +1,371 @@
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+/* Auth checking spinner */
+.authSpinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--pink);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@media (min-width: 768px) {
+  .layout {
+    grid-template-columns: 1fr 380px;
+    align-items: start;
+  }
+}
+
+/* ── Card ── */
+.card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: var(--text-dark);
+}
+.cardHeader h3 {
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+  color: var(--text-dark);
+}
+
+/* ── Form Grid ── */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 16px;
+}
+@media (max-width: 480px) {
+  .formGrid { grid-template-columns: 1fr; }
+}
+.fullWidth { grid-column: 1 / -1; }
+
+/* ── Error Banner ── */
+.errorBanner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff5f5;
+  border: 1px solid #ffcccc;
+  border-left: 4px solid #e53935;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 14px;
+  color: #c62828;
+  animation: shake 0.3s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* ── Payment Options ── */
+.paymentOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.paymentOption {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.paymentOption:hover { border-color: #ccc; }
+.paymentActive {
+  border-color: var(--text-dark) !important;
+  background: #f9f9f9;
+}
+.payEmoji { font-size: 22px; flex-shrink: 0; }
+.payInfo { flex: 1; display: flex; flex-direction: column; }
+.payLabel { font-size: 14px; font-weight: 500; color: var(--text-dark); }
+.payDesc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+.payCheck { color: var(--text-dark); flex-shrink: 0; }
+
+.payNote {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #f9f9f9;
+  border-radius: var(--radius-sm);
+  line-height: 1.6;
+}
+
+/* ── Manual Payment Box ── */
+.manualPayBox {
+  margin-top: 16px;
+  border: 1.5px dashed #e8527f;
+  border-radius: var(--radius);
+  padding: 18px;
+  background: #fff9fb;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.manualPayHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.manualBadge {
+  font-size: 10px;
+  background: #fff0f4;
+  color: var(--pink);
+  border: 1px solid #f9c0d0;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-weight: 600;
+}
+.payDetails {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+}
+.payDetailLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+.payDetailVal {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: 0.5px;
+}
+.payDetailSub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+.copyRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.copyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 500;
+  cursor: pointer;
+  color: var(--text-dark);
+  transition: background 0.15s;
+}
+.copyBtn:hover { background: #e8527f; color: white; }
+.bankGrid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 16px;
+  align-items: center;
+  font-size: 13px;
+}
+.bankGrid span { color: var(--text-muted); font-size: 12px; }
+
+/* ── Screenshot Upload ── */
+.uploadSection { display: flex; flex-direction: column; gap: 6px; }
+.uploadLabel { font-size: 12px; font-weight: 600; color: var(--text-dark); }
+.uploadBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 1.5px dashed var(--pink);
+  border-radius: var(--radius-sm);
+  background: white;
+  color: var(--pink);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  width: 100%;
+  justify-content: center;
+}
+.uploadBtn:hover { background: #fff0f4; }
+.uploadPreview {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: #166534;
+}
+.uploadPreview span { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.uploadChangeBtn {
+  border: none;
+  background: none;
+  color: #dc2626;
+  font-size: 12px;
+  cursor: pointer;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.manualNote {
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  padding-top: 4px;
+  border-top: 1px solid #f5dde5;
+}
+
+
+/* ── Summary ── */
+.summaryTitle {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.itemList::-webkit-scrollbar { width: 3px; }
+.itemList::-webkit-scrollbar-thumb { background: #ddd; border-radius: 3px; }
+
+.orderItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.orderItemImg {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
+  background: #fdf0f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.orderItemInfo { flex: 1; min-width: 0; }
+.orderItemTitle { font-size: 13px; font-weight: 500; color: var(--text-dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.orderItemVariant { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.orderItemQty { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+.orderItemPrice { font-size: 14px; font-weight: 700; color: var(--text-dark); white-space: nowrap; }
+
+/* ── Totals ── */
+.orderTotals {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.orderRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text-mid);
+}
+.shippingNote {
+  font-size: 11px;
+  color: var(--pink);
+  background: #fff0f4;
+  padding: 6px 10px;
+  border-radius: 4px;
+  text-align: center;
+}
+.grandTotalRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-dark);
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  margin-top: 6px;
+}
+.grandTotalVal {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ── Place Order Button ── */
+.placeOrderBtn {
+  width: 100%;
+  margin-top: 18px;
+  padding: 15px;
+  background: var(--text-dark);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: var(--transition);
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.placeOrderBtn:hover:not(:disabled) { background: var(--pink); }
+.placeOrderBtn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.loadingSpinner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.loadingSpinner::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.secureNote {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 10px;
+}

@@ -1,0 +1,54 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--light-pink) 0%, #fff9f6 60%, #e8d5ff 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.card {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 40px 32px;
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideUp 0.4s ease;
+}
+@keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.brand { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; text-align: center; }
+.title { font-family: 'Playfair Display', serif; font-size: 26px; text-align: center; }
+.sub { color: var(--text-muted); font-size: 14px; text-align: center; margin-top: -8px; }
+.googleBtn {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 13px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: white;
+  font-size: 14px; font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.googleBtn:hover { border-color: var(--pink); background: #fff5f8; }
+.tabs { display: flex; gap: 8px; }
+.tabBtn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: white; cursor: pointer;
+  font-size: 13px; font-weight: 600;
+  transition: var(--transition);
+}
+.tabBtn:hover { border-color: var(--pink); }
+.tabActive { background: var(--light-pink); border-color: var(--pink); color: var(--pink); }
+.passwordWrap { position: relative; }
+.eyeBtn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); }
+.resendBtn { background: none; border: none; color: var(--pink); font-size: 13px; cursor: pointer; margin-top: 8px; text-decoration: underline; }
+.switchText { font-size: 13px; color: var(--text-muted); text-align: center; }
+.switchBtn { background: none; border: none; color: var(--pink); font-weight: 700; cursor: pointer; margin-left: 6px; font-size: 13px; }
+.guestBtn { text-align: center; font-size: 13px; color: var(--text-muted); display: block; }
+.guestBtn:hover { color: var(--pink); }
