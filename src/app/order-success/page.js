@@ -11,6 +11,7 @@ function OrderSuccessContent() {
   const params = useSearchParams();
   const orderId = params.get("id") || "ORD" + Date.now();
   const [confetti, setConfetti] = useState(true);
+
   useEffect(() => { const t = setTimeout(() => setConfetti(false), 4000); return () => clearTimeout(t); }, []);
 
   return (
@@ -32,7 +33,8 @@ function OrderSuccessContent() {
             <div className={styles.infoRow}><Package size={16} color="var(--pink)" /><span>Order ID:</span><strong>{orderId}</strong></div>
             <div className={styles.infoRow}><span>Estimated Delivery:</span><strong>3-5 business days</strong></div>
           </div>
-          <div className={styles.actions}>
+
+          <div className={styles.actions} style={{ marginTop: 24 }}>
             <Link href="/" className="btn-primary" id="success-continue-btn">Continue Shopping</Link>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hi! I just placed order ${orderId}. Need help?`)}`}

@@ -24,6 +24,7 @@ const PAY_STATUS_CONFIG = {
   rejected:             { label: "Rejected",            color: "#ef4444", bg: "#fef2f2", icon: <XCircle size={13} /> },
   cod_pending:          { label: "COD",                 color: "#6b7280", bg: "#f9fafb", icon: <Package size={13} /> },
   paid:                 { label: "Paid",                color: "#10b981", bg: "#f0fdf4", icon: <CheckCircle size={13} /> },
+  payment_link_sent:    { label: "Link Sent",           color: "#3b82f6", bg: "#eff6ff", icon: <Link2 size={13} /> },
 };
 
 export default function AdminPage() {
@@ -57,7 +58,7 @@ export default function AdminPage() {
   // Settings tab state
   const DEFAULT_PAYMENT_INFO = {
     upi: "", name: "Ani Finds", bank: "", account: "", ifsc: "", whatsapp: "",
-    methods: { cod: true, upi: true, card: false },
+    methods: { cod: true, upi: true, razorpay: false },
   };
   const [settings, setSettings] = useState(DEFAULT_PAYMENT_INFO);
   const handleMethodToggle = (method) => setSettings(prev => ({
@@ -661,25 +662,7 @@ export default function AdminPage() {
                 </div>
 
                 {/* Bank Transfer Section */}
-                <div className={`card ${styles.settingsCard}`}>
-                  <div className={styles.settingsCardHead}>
-                    <Landmark size={20} color="var(--pink)" />
-                    <h3>Bank Transfer</h3>
-                  </div>
-                  <p className={styles.settingsHint}>Shown to customers who select "Card / Netbanking" (manual bank transfer).</p>
-                  <div className={styles.settingsField}>
-                    <label>Bank Name</label>
-                    <input id="settings-bank" type="text" placeholder="State Bank of India" value={settings.bank} onChange={(e) => handleSettingsChange("bank", e.target.value)} className={styles.settingsInput} />
-                  </div>
-                  <div className={styles.settingsField}>
-                    <label>Account Number</label>
-                    <input id="settings-account" type="text" placeholder="1234 5678 9012 3456" value={settings.account} onChange={(e) => handleSettingsChange("account", e.target.value)} className={styles.settingsInput} />
-                  </div>
-                  <div className={styles.settingsField}>
-                    <label>IFSC Code</label>
-                    <input id="settings-ifsc" type="text" placeholder="SBIN0001234" value={settings.ifsc} onChange={(e) => handleSettingsChange("ifsc", e.target.value.toUpperCase())} className={styles.settingsInput} />
-                  </div>
-                </div>
+
 
                 {/* WhatsApp Section */}
                 <div className={`card ${styles.settingsCard}`}>
@@ -730,7 +713,7 @@ export default function AdminPage() {
                     {[
                       { key:"cod",  label:"Cash on Delivery",     emoji:"💵", desc:"Customer pays when order arrives" },
                       { key:"upi",  label:"UPI / Google Pay",      emoji:"📱", desc:"Instant UPI payment — requires UPI ID above" },
-                      { key:"card", label:"Card / Net Banking",    emoji:"💳", desc:"Manual bank transfer — requires bank details above" },
+                      { key:"razorpay", label:"Razorpay Payment Link", emoji:"🔗", desc:"Send Razorpay link to customer after order" },
                     ].map(m => (
                       <div key={m.key} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"12px 16px",background:settings.methods?.[m.key] ? "#fff8fb" : "#fafafa",border:`1.5px solid ${settings.methods?.[m.key] ? "#f9a8c9" : "#eee"}`,borderRadius:12,transition:"all 0.2s"}}>
                         <div style={{display:"flex",alignItems:"center",gap:12}}>
