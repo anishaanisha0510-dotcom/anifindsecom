@@ -12,7 +12,7 @@ import { Heart, ShoppingBag, Zap, MessageCircle, Star, Truck, RotateCcw, Share2 
 import toast from "react-hot-toast";
 import styles from "./page.module.css";
 
-const TABS = ["Description", "Materials", "Shipping", "Reviews"];
+const TABS = ["Description", "Materials", "Shipping", "Return Policy", "Reviews"];
 
 export default function ProductDetailPage() {
   const { id } = useParams();
@@ -240,7 +240,7 @@ export default function ProductDetailPage() {
 
             {/* Trust */}
             <div className={styles.trustRow}>
-              <div className={styles.trustChip}><RotateCcw size={13} /> 7-day returns</div>
+              <div className={styles.trustChip}><RotateCcw size={13} /> No returns</div>
               <div className={styles.trustChip}><Truck size={13} /> Fast delivery</div>
             </div>
           </div>
@@ -261,6 +261,7 @@ export default function ProductDetailPage() {
           {activeTab === "Description" && <p>Beautiful handcrafted {product.title}. Perfect for everyday wear or gifting. Suitable for all occasions. Lightweight and comfortable to wear all day.</p>}
           {activeTab === "Materials" && <p>Made with high-quality alloy metal, hypoallergenic. Nickel-free and lead-free. Safe for sensitive skin.</p>}
           {activeTab === "Shipping" && <p>🚚 Standard Delivery: 3-5 business days. Express delivery available. Free shipping on orders above ₹999. PAN India delivery.</p>}
+          {activeTab === "Return Policy" && <p>No return for that product.</p>}
           {activeTab === "Reviews" && (
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 8 }}>
