@@ -71,6 +71,29 @@ export default function CheckoutPage() {
     state: "Tamil Nadu",
   });
 
+  const [saveAddress, setSaveAddress] = useState(true);
+
+  // Load last checkout data from localStorage
+  useEffect(() => {
+    try {
+      const lastData = localStorage.getItem("lastCheckoutData");
+      if (lastData) {
+        const parsed = JSON.parse(lastData);
+        setForm(prev => ({
+          ...prev,
+          name: parsed.name || prev.name,
+          phone: parsed.phone || prev.phone,
+          email: parsed.email || prev.email,
+          address: parsed.address || prev.address,
+          landmark: parsed.landmark || prev.landmark,
+          pincode: parsed.pincode || prev.pincode,
+          city: parsed.city || prev.city,
+          state: parsed.state || prev.state,
+        }));
+      }
+    } catch (e) { console.error(e); }
+  }, []);
+
   const isNewAddress = selectedAddressIndex === -1 || !userProfile?.addresses?.length;
   const activeState = isNewAddress ? form.state : userProfile.addresses[selectedAddressIndex]?.state || "Tamil Nadu";
   
@@ -145,6 +168,13 @@ export default function CheckoutPage() {
       createdAt: new Date().toISOString(),
     };
 
+    // Save to local storage for next time
+    try {
+      if (isNewAddress) {
+        localStorage.setItem("lastCheckoutData", JSON.stringify(form));
+      }
+    } catch (e) {}
+
     try {
       // 1. Create Razorpay order on server
       const res = await fetch("/api/razorpay-order", {
@@ -178,7 +208,7 @@ export default function CheckoutPage() {
             const ref = await addDoc(collection(db, "orders"), orderData);
 
             // Save new address if applicable
-            if (isNewAddress && user) {
+            if (isNewAddress && user && saveAddress) {
               try {
                 const userRef = doc(db, "users", user.uid);
                 await updateDoc(userRef, {
@@ -388,6 +418,20 @@ export default function CheckoutPage() {
                       {INDIAN_STATES.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
+                  {user && (
+                    <div className={`form-group ${styles.fullWidth}`} style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
+                      <input 
+                        type="checkbox" 
+                        id="save-address" 
+                        checked={saveAddress} 
+                        onChange={(e) => setSaveAddress(e.target.checked)} 
+                        style={{ width: "auto" }}
+                      />
+                      <label htmlFor="save-address" style={{ fontSize: 14, color: "var(--text-dark)", margin: 0, cursor: "pointer" }}>
+                        Save this address to my profile
+                      </label>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
