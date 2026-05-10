@@ -136,6 +136,25 @@ function ProfileContent() {
   // Wishlist from Firestore products (real)
   const [wishlistProducts, setWishlistProducts] = useState([]);
 
+  // Profile Form State
+  const [profileName, setProfileName] = useState("");
+  const [profilePhone, setProfilePhone] = useState("");
+  const [profileSaving, setProfileSaving] = useState(false);
+
+  // Address State
+  const [addresses, setAddresses] = useState([]);
+  const [showAddressForm, setShowAddressForm] = useState(false);
+  const [newAddress, setNewAddress] = useState({ name: "", phone: "", address: "", city: "", pincode: "" });
+  const [addressSaving, setAddressSaving] = useState(false);
+
+  useEffect(() => {
+    if (userProfile) {
+      setProfileName(userProfile.name || "");
+      setProfilePhone(userProfile.phone || "");
+      setAddresses(userProfile.addresses || []);
+    }
+  }, [userProfile]);
+
   useEffect(() => {
     if (activeTab === "orders" && user) loadOrders();
   }, [activeTab, user]);
@@ -171,6 +190,61 @@ function ProfileContent() {
       const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       setWishlistProducts(all.filter(p => wishlist.includes(p.id)));
     } catch {}
+  };
+
+  const saveProfile = async () => {
+    if (!user) return;
+    setProfileSaving(true);
+    try {
+      const { doc, updateDoc } = await import("firebase/firestore");
+      const { db } = await import("@/lib/firebase");
+      await updateDoc(doc(db, "users", user.uid), {
+        name: profileName,
+        phone: profilePhone
+      });
+      alert("Profile updated successfully!");
+    } catch (e) {
+      console.error(e);
+      alert("Failed to update profile");
+    }
+    setProfileSaving(false);
+  };
+
+  const saveAddress = async (e) => {
+    e.preventDefault();
+    if (!user) return;
+    setAddressSaving(true);
+    try {
+      const { doc, updateDoc } = await import("firebase/firestore");
+      const { db } = await import("@/lib/firebase");
+      const updatedAddresses = [...addresses, { ...newAddress, id: Date.now().toString() }];
+      await updateDoc(doc(db, "users", user.uid), {
+        addresses: updatedAddresses
+      });
+      setAddresses(updatedAddresses);
+      setNewAddress({ name: "", phone: "", address: "", city: "", pincode: "" });
+      setShowAddressForm(false);
+    } catch (e) {
+      console.error(e);
+      alert("Failed to save address");
+    }
+    setAddressSaving(false);
+  };
+
+  const deleteAddress = async (id) => {
+    if (!user) return;
+    try {
+      const { doc, updateDoc } = await import("firebase/firestore");
+      const { db } = await import("@/lib/firebase");
+      const updatedAddresses = addresses.filter(a => a.id !== id);
+      await updateDoc(doc(db, "users", user.uid), {
+        addresses: updatedAddresses
+      });
+      setAddresses(updatedAddresses);
+    } catch (e) {
+      console.error(e);
+      alert("Failed to delete address");
+    }
   };
 
   if (!user) {
@@ -261,10 +335,64 @@ function ProfileContent() {
 
           {/* ── Addresses ── */}
           {activeTab === "addresses" && (
-            <div className={styles.emptyState}>
-              <span style={{ fontSize: 60 }}>📍</span>
-              <h3>No saved addresses</h3>
-              <p>Your delivery addresses will be saved here</p>
+            <div>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+                <p style={{ fontWeight: 700, fontSize: 16 }}>Saved Addresses</p>
+                <button onClick={() => setShowAddressForm(!showAddressForm)} className="btn-primary" style={{ padding: "6px 12px", fontSize: 13 }}>
+                  + Add New
+                </button>
+              </div>
+
+              {showAddressForm && (
+                <form onSubmit={saveAddress} className="card" style={{ padding: 20, marginBottom: 20 }}>
+                  <h4 style={{ marginBottom: 14 }}>Add New Address</h4>
+                  <div className="form-group">
+                    <label className="form-label">Name</label>
+                    <input required value={newAddress.name} onChange={e => setNewAddress({...newAddress, name: e.target.value})} placeholder="Recipient Name" />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Phone</label>
+                    <input required value={newAddress.phone} onChange={e => setNewAddress({...newAddress, phone: e.target.value})} placeholder="Phone Number" />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Full Address</label>
+                    <textarea required value={newAddress.address} onChange={e => setNewAddress({...newAddress, address: e.target.value})} placeholder="House No, Street, Landmark" rows="3" style={{ width: "100%", padding: "10px 14px", border: "1px solid #f0e6ec", borderRadius: 8 }}></textarea>
+                  </div>
+                  <div style={{ display: "flex", gap: 14 }}>
+                    <div className="form-group" style={{ flex: 1 }}>
+                      <label className="form-label">City</label>
+                      <input required value={newAddress.city} onChange={e => setNewAddress({...newAddress, city: e.target.value})} placeholder="City" />
+                    </div>
+                    <div className="form-group" style={{ flex: 1 }}>
+                      <label className="form-label">Pincode</label>
+                      <input required value={newAddress.pincode} onChange={e => setNewAddress({...newAddress, pincode: e.target.value})} placeholder="Pincode" />
+                    </div>
+                  </div>
+                  <div style={{ display: "flex", gap: 10, marginTop: 10 }}>
+                    <button type="button" onClick={() => setShowAddressForm(false)} style={{ flex: 1, padding: "10px", background: "none", border: "1px solid #ddd", borderRadius: 8, cursor: "pointer", fontWeight: 600 }}>Cancel</button>
+                    <button type="submit" disabled={addressSaving} className="btn-primary" style={{ flex: 1 }}>{addressSaving ? "Saving..." : "Save Address"}</button>
+                  </div>
+                </form>
+              )}
+
+              {addresses.length === 0 && !showAddressForm ? (
+                <div className={styles.emptyState}>
+                  <span style={{ fontSize: 60 }}>📍</span>
+                  <h3>No saved addresses</h3>
+                  <p>Your delivery addresses will be saved here</p>
+                </div>
+              ) : (
+                <div style={{ display: "grid", gap: 14 }}>
+                  {addresses.map(addr => (
+                    <div key={addr.id} style={{ background: "white", border: "1px solid #f0e6ec", borderRadius: 12, padding: "16px", position: "relative" }}>
+                      <p style={{ fontWeight: 700, marginBottom: 4 }}>{addr.name}</p>
+                      <p style={{ color: "#555", fontSize: 14, marginBottom: 2 }}>{addr.phone}</p>
+                      <p style={{ color: "#555", fontSize: 14 }}>{addr.address}, {addr.city} — {addr.pincode}</p>
+                      <button onClick={() => deleteAddress(addr.id)} style={{ position: "absolute", top: 16, right: 16, background: "none", border: "none", color: "#ef4444", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>Delete</button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
@@ -274,7 +402,7 @@ function ProfileContent() {
               <h3 style={{ fontFamily: "Playfair Display, serif", marginBottom: 20 }}>Account Details</h3>
               <div className="form-group">
                 <label className="form-label">Full Name</label>
-                <input defaultValue={userProfile?.name || ""} placeholder="Your name" id="profile-name-input" />
+                <input value={profileName} onChange={e => setProfileName(e.target.value)} placeholder="Your name" id="profile-name-input" />
               </div>
               <div className="form-group">
                 <label className="form-label">Email</label>
@@ -282,9 +410,11 @@ function ProfileContent() {
               </div>
               <div className="form-group">
                 <label className="form-label">Phone</label>
-                <input defaultValue={userProfile?.phone || ""} placeholder="+91 XXXXX XXXXX" id="profile-phone-input" />
+                <input value={profilePhone} onChange={e => setProfilePhone(e.target.value)} placeholder="+91 XXXXX XXXXX" id="profile-phone-input" />
               </div>
-              <button className="btn-primary" id="save-profile-btn">Save Changes</button>
+              <button onClick={saveProfile} disabled={profileSaving} className="btn-primary" id="save-profile-btn">
+                {profileSaving ? "Saving..." : "Save Changes"}
+              </button>
             </div>
           )}
         </div>
