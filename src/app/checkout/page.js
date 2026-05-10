@@ -23,7 +23,25 @@ export default function CheckoutPage() {
   const { user, userProfile, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(false);
 
-  // (Removed unused payment settings fetch since Razorpay is forced)
+  const [shippingSettings, setShippingSettings] = useState({ freeShippingThreshold: 999, rates: {} });
+  const [shippingLoading, setShippingLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchShipping = async () => {
+      try {
+        const { doc, getDoc } = await import("firebase/firestore");
+        const { db } = await import("@/lib/firebase");
+        const snap = await getDoc(doc(db, "settings", "shipping"));
+        if (snap.exists()) {
+          setShippingSettings({ freeShippingThreshold: 999, rates: {}, ...snap.data() });
+        }
+      } catch (err) {
+        console.error("Failed to load shipping settings", err);
+      }
+      setShippingLoading(false);
+    };
+    fetchShipping();
+  }, []);
 
   // 🔒 Auth guard — redirect to login if not signed in
   useEffect(() => {
@@ -53,7 +71,18 @@ export default function CheckoutPage() {
     state: "Tamil Nadu",
   });
 
-  const shipping = cartTotal >= 999 ? 0 : 99;
+  const isNewAddress = selectedAddressIndex === -1 || !userProfile?.addresses?.length;
+  const activeState = isNewAddress ? form.state : userProfile.addresses[selectedAddressIndex]?.state || "Tamil Nadu";
+  
+  const getShippingCost = () => {
+    if (cartTotal >= shippingSettings.freeShippingThreshold) return 0;
+    if (shippingSettings.rates[activeState] !== undefined && shippingSettings.rates[activeState] !== "") {
+      return Number(shippingSettings.rates[activeState]);
+    }
+    return 99; // Default fallback
+  };
+
+  const shipping = getShippingCost();
   const total = cartTotal + shipping;
 
   const handleChange = (e) => {
@@ -62,7 +91,6 @@ export default function CheckoutPage() {
   };
 
   const handlePlaceOrder = async () => {
-    const isNewAddress = selectedAddressIndex === -1 || !userProfile?.addresses?.length;
     const activeAddress = isNewAddress ? form : userProfile.addresses[selectedAddressIndex];
 
     if (isNewAddress) {

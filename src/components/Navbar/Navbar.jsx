@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -16,17 +17,37 @@ export default function Navbar() {
   const [searchVal, setSearchVal] = useState("");
   const searchRef = useRef(null);
 
+  const [categories, setCategories] = useState([]);
+
   useEffect(() => {
     if (searchOpen) searchRef.current?.focus();
   }, [searchOpen]);
 
-  const navLinks = [
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const { collection, getDocs } = await import("firebase/firestore");
+        const { db } = await import("@/lib/firebase");
+        const catSnap = await getDocs(collection(db, "categories"));
+        setCategories(catSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+      } catch (e) {
+        console.error("Failed to load categories for Navbar", e);
+      }
+    };
+    loadCategories();
+  }, []);
+
+  const baseLinks = [
     { label: "Home", href: "/" },
     { label: "Shop", href: "/products" },
-    { label: "Jewelry", href: "/products?category=jewelry" },
-    { label: "Claws", href: "/products?category=claws" },
-    { label: "Combos", href: "/products?category=combos" },
   ];
+  
+  const dynamicLinks = categories.map(cat => ({
+    label: cat.name,
+    href: `/products?category=${cat.name?.toLowerCase()}`,
+  }));
+
+  const navLinks = [...baseLinks, ...dynamicLinks];
 
   return (
     <>
@@ -45,8 +66,7 @@ export default function Navbar() {
 
           {/* Center: logo */}
           <Link href="/" className={styles.logo} id="nav-logo">
-            <span className={styles.logoText}>Ani Finds</span>
-            <span className={styles.logoSub}>fashion & jewellery</span>
+            <Image src="/assets/logo/logo.png" alt="Ani Finds Logo" width={110} height={35} style={{ objectFit: "contain" }} />
           </Link>
 
           {/* Right icons */}
@@ -99,7 +119,7 @@ export default function Navbar() {
         <div className={styles.overlay} onClick={() => setMenuOpen(false)}>
           <div className={styles.drawer} onClick={(e) => e.stopPropagation()}>
             <div className={styles.drawerHeader}>
-              <span className={styles.logo}>Ani Finds</span>
+              <Image src="/assets/logo/logo.png" alt="Ani Finds Logo" width={90} height={30} style={{ objectFit: "contain" }} />
               <button onClick={() => setMenuOpen(false)} className={styles.iconBtn}><X size={20} strokeWidth={1.5} /></button>
             </div>
             <nav className={styles.drawerNav}>

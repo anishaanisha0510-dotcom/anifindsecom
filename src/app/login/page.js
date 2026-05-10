@@ -2,6 +2,7 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { Globe, Phone, Mail, Eye, EyeOff } from "lucide-react";
 import toast from "react-hot-toast";
@@ -88,7 +89,9 @@ function LoginForm() {
   return (
     <div className={styles.page}>
       <div className={styles.card}>
-        <div className={styles.brand}>🌸 Ani Finds</div>
+        <div className={styles.brand}>
+          <Image src="/assets/logo/logo.png" alt="Ani Finds Logo" width={120} height={40} style={{ objectFit: "contain", display: "block", margin: "0 auto" }} />
+        </div>
         <h1 className={styles.title}>{isRegister ? "Create Account" : "Welcome Back"}</h1>
         <p className={styles.sub}>{isRegister ? "Join the Ani Finds family 💛" : "Sign in to continue shopping"}</p>
 

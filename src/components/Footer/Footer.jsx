@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Camera, Share2, Play, Mail, Phone, MapPin } from "lucide-react";
 import styles from "./Footer.module.css";
 
@@ -8,7 +9,9 @@ export default function Footer() {
       <div className={`container ${styles.grid}`}>
         {/* Brand */}
         <div className={styles.brand}>
-          <Link href="/" className={styles.logo}>Ani Finds</Link>
+          <Link href="/" className={styles.logo}>
+            <Image src="/assets/logo/logo.png" alt="Ani Finds Logo" width={100} height={30} style={{ objectFit: "contain", display: "block" }} />
+          </Link>
           <p className={styles.tagline}>fashion & jewellery</p>
           <p className={styles.desc}>Affordable, cute fashion accessories and jewellery for young women across India.</p>
           <div className={styles.socials}>

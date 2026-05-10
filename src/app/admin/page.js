@@ -27,6 +27,13 @@ const PAY_STATUS_CONFIG = {
   payment_link_sent:    { label: "Link Sent",           color: "#3b82f6", bg: "#eff6ff", icon: <Link2 size={13} /> },
 };
 
+const INDIAN_STATES = [
+  "Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chhattisgarh","Goa","Gujarat",
+  "Haryana","Himachal Pradesh","Jharkhand","Karnataka","Kerala","Madhya Pradesh",
+  "Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Punjab",
+  "Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal"
+];
+
 export default function AdminPage() {
   const router = useRouter();
   const { user, userProfile, loading: authLoading } = useAuth();
@@ -68,6 +75,15 @@ export default function AdminPage() {
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSaving, setSettingsSaving] = useState(false);
   const [settingsSaved, setSettingsSaved] = useState(false);
+  
+  const [shippingSettings, setShippingSettings] = useState({ freeShippingThreshold: 999, rates: {} });
+  
+  const handleShippingRateChange = (state, value) => {
+    setShippingSettings(prev => ({
+      ...prev,
+      rates: { ...prev.rates, [state]: value }
+    }));
+  };
 
   /* ── Auth guard ── */
   useEffect(() => {
@@ -182,6 +198,11 @@ export default function AdminPage() {
       const { db } = await import("@/lib/firebase");
       const snap = await getDoc(doc(db, "settings", "payment"));
       if (snap.exists()) setSettings({ ...DEFAULT_PAYMENT_INFO, ...snap.data() });
+      
+      const shippingSnap = await getDoc(doc(db, "settings", "shipping"));
+      if (shippingSnap.exists()) {
+        setShippingSettings({ freeShippingThreshold: 999, rates: {}, ...shippingSnap.data() });
+      }
     } catch (err) { console.error("Settings load failed:", err); }
     setSettingsLoading(false);
   };
@@ -194,6 +215,7 @@ export default function AdminPage() {
       const { doc, setDoc } = await import("firebase/firestore");
       const { db } = await import("@/lib/firebase");
       await setDoc(doc(db, "settings", "payment"), { ...settings, updatedAt: new Date().toISOString() });
+      await setDoc(doc(db, "settings", "shipping"), { ...shippingSettings, updatedAt: new Date().toISOString() });
       setSettingsSaved(true);
       setTimeout(() => setSettingsSaved(false), 3000);
     } catch (err) { alert("Save failed: " + err.message); }
@@ -699,6 +721,48 @@ export default function AdminPage() {
                     {settings.whatsapp && (
                       <p className={styles.previewWhatsapp}>💬 WhatsApp: +{settings.whatsapp}</p>
                     )}
+                  </div>
+                </div>
+
+                {/* Shipping Rates */}
+                <div className={`card ${styles.settingsCard}`} style={{gridColumn:"1 / -1"}}>
+                  <div className={styles.settingsCardHead}>
+                    <Package size={20} color="var(--pink)" />
+                    <h3>Shipping Rates</h3>
+                  </div>
+                  <p className={styles.settingsHint}>Configure delivery charges for each state. If a state is not set, it will default to ₹99.</p>
+                  
+                  <div className={styles.settingsField} style={{maxWidth: 300, marginBottom: 20}}>
+                    <label>Free Shipping Threshold (₹) <span className={styles.required}>*</span></label>
+                    <input
+                      type="number"
+                      value={shippingSettings.freeShippingThreshold}
+                      onChange={(e) => setShippingSettings(prev => ({...prev, freeShippingThreshold: Number(e.target.value)}))}
+                      className={styles.settingsInput}
+                    />
+                    <span className={styles.settingsExample}>Orders above this amount get free shipping</span>
+                  </div>
+
+                  <div style={{display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16}}>
+                    {INDIAN_STATES.map(state => (
+                      <div key={state} style={{display: "flex", flexDirection: "column", gap: 6}}>
+                        <label style={{fontSize: 13, fontWeight: 600, color: "#555"}}>{state}</label>
+                        <input
+                          type="number"
+                          placeholder="99"
+                          value={shippingSettings.rates[state] ?? ""}
+                          onChange={(e) => handleShippingRateChange(state, e.target.value === "" ? "" : Number(e.target.value))}
+                          style={{
+                            padding: "8px 12px",
+                            border: "1px solid #ddd",
+                            borderRadius: 8,
+                            fontSize: 14,
+                            outline: "none",
+                            width: "100%",
+                          }}
+                        />
+                      </div>
+                    ))}
                   </div>
                 </div>
 
