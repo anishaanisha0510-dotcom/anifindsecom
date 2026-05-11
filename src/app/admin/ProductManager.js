@@ -226,6 +226,10 @@ export default function ProductManager() {
       } else {
         await addDoc(collection(db, "products"), { ...data, likes: 0, createdAt: new Date().toISOString() });
       }
+      
+      const { setDoc } = await import("firebase/firestore");
+      await setDoc(doc(db, "settings", "cache"), { productsLastUpdated: Date.now() }, { merge: true });
+
       setShowForm(false);
       loadData();
     } catch (e) { alert("Save failed: " + e.message); }
@@ -235,9 +239,10 @@ export default function ProductManager() {
   const handleDelete = async (id, name) => {
     if (!confirm(`Delete "${name}"?`)) return;
     try {
-      const { doc, deleteDoc } = await import("firebase/firestore");
+      const { doc, deleteDoc, setDoc } = await import("firebase/firestore");
       const { db } = await import("@/lib/firebase");
       await deleteDoc(doc(db, "products", id));
+      await setDoc(doc(db, "settings", "cache"), { productsLastUpdated: Date.now() }, { merge: true });
       setProducts(prev => prev.filter(p => p.id !== id));
     } catch (e) { alert("Delete failed: " + e.message); }
   };

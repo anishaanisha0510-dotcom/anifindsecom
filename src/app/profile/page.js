@@ -1,6 +1,7 @@
 "use client";
 import { useAuth } from "@/context/AuthContext";
 import { useWishlist } from "@/context/WishlistContext";
+import { useProductsCache } from "@/hooks/useProductsCache";
 import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import ProductCard from "@/components/ProductCard/ProductCard";
@@ -133,8 +134,9 @@ function ProfileContent() {
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
 
-  // Wishlist from Firestore products (real)
-  const [wishlistProducts, setWishlistProducts] = useState([]);
+  // Wishlist from cache
+  const { products: allProducts } = useProductsCache();
+  const wishlistProducts = allProducts.filter(p => wishlist.includes(p.id));
 
   // Profile Form State
   const [profileName, setProfileName] = useState("");
@@ -159,10 +161,6 @@ function ProfileContent() {
     if (activeTab === "orders" && user) loadOrders();
   }, [activeTab, user]);
 
-  useEffect(() => {
-    if (activeTab === "wishlist" && wishlist.length > 0) loadWishlistProducts();
-  }, [activeTab, wishlist]);
-
   const loadOrders = async () => {
     setOrdersLoading(true);
     try {
@@ -180,16 +178,6 @@ function ProfileContent() {
       console.error("loadOrders error:", e);
     }
     setOrdersLoading(false);
-  };
-
-  const loadWishlistProducts = async () => {
-    try {
-      const { collection, getDocs } = await import("firebase/firestore");
-      const { db } = await import("@/lib/firebase");
-      const snap = await getDocs(collection(db, "products"));
-      const all = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      setWishlistProducts(all.filter(p => wishlist.includes(p.id)));
-    } catch {}
   };
 
   const saveProfile = async () => {

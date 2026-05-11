@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import { ArrowRight, Package, RotateCcw, Headphones, Truck, Star } from "lucide-react";
+import { useProductsCache } from "@/hooks/useProductsCache";
 import styles from "./page.module.css";
 
 const BANNERS = [
@@ -63,12 +64,14 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [heroMedia, setHeroMedia] = useState(null); // {mediaType, imageBase64, imageUrl, youtubeUrl, headline, subtext, ctaLabel, ctaHref}
 
+  const { products, loading: productsLoading } = useProductsCache();
+
   useEffect(() => {
     const id = setInterval(() => setBannerIdx((i) => (i + 1) % BANNERS.length), 5000);
     return () => clearInterval(id);
   }, []);
 
-  // Load products + categories + hero from Firestore
+  // Load categories + hero from Firestore
   useEffect(() => {
     const load = async () => {
       setLoading(true);
@@ -80,12 +83,6 @@ export default function HomePage() {
         const heroSnap = await getDoc(doc(db, "settings", "hero"));
         if (heroSnap.exists()) setHeroMedia(heroSnap.data());
 
-        // Load products
-        const prodSnap = await getDocs(collection(db, "products"));
-        const products = prodSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-        setTrending(products.filter(p => p.isBestSeller).slice(0, 8));
-        setNewArrivals(products.filter(p => p.isNew).slice(0, 8));
-
         // Load categories
         const catSnap = await getDocs(collection(db, "categories"));
         setCategories(catSnap.docs.map(d => ({ id: d.id, ...d.data() })));
@@ -96,6 +93,13 @@ export default function HomePage() {
     };
     load();
   }, []);
+
+  useEffect(() => {
+    if (!productsLoading && products) {
+      setTrending(products.filter(p => p.isBestSeller).slice(0, 8));
+      setNewArrivals(products.filter(p => p.isNew).slice(0, 8));
+    }
+  }, [products, productsLoading]);
 
 
 

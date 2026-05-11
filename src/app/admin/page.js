@@ -9,6 +9,7 @@ import {
   Clock, Eye, RefreshCw, AlertTriangle, X, Settings, Save, Phone, Landmark, QrCode, Layers, Image, PlayCircle, Link2,
 } from "lucide-react";
 import styles from "./page.module.css";
+import { useProductsCache } from "@/hooks/useProductsCache";
 import CategoryManager from "./CategoryManager";
 import ProductManager from "./ProductManager";
 import HeroBannerManager from "./HeroBannerManager";
@@ -37,6 +38,7 @@ const INDIAN_STATES = [
 export default function AdminPage() {
   const router = useRouter();
   const { user, userProfile, loading: authLoading } = useAuth();
+  const { products: cachedProducts } = useProductsCache();
   const [nav, setNav] = useState("dashboard");
   const [orderFilter, setOrderFilter] = useState("All");
 
@@ -124,14 +126,11 @@ export default function AdminPage() {
       try {
         const { collection, getDocs, query } = await import("firebase/firestore");
         const { db } = await import("@/lib/firebase");
-        const [ordSnap, prodSnap] = await Promise.all([
-          getDocs(collection(db, "orders")),
-          getDocs(collection(db, "products")),
-        ]);
+        const ordSnap = await getDocs(collection(db, "orders"));
         const orders = ordSnap.docs.map(d => d.data());
         const totalSales = orders.reduce((sum, o) => sum + (Number(o.total) || 0), 0);
         const uniqueEmails = new Set(orders.map(o => o.userEmail).filter(Boolean));
-        setStats({ sales: totalSales, orders: orders.length, products: prodSnap.size, customers: uniqueEmails.size, loading: false });
+        setStats({ sales: totalSales, orders: orders.length, products: 0, customers: uniqueEmails.size, loading: false });
       } catch { setStats(s => ({ ...s, loading: false })); }
     };
     loadStats();
@@ -338,7 +337,7 @@ export default function AdminPage() {
               {[
                 { label: "Total Sales", value: stats.loading ? "—" : `₹${stats.sales.toLocaleString("en-IN")}`, icon: <TrendingUp size={20}/>, color: "#F7A8C4" },
                 { label: "Total Orders", value: stats.loading ? "—" : stats.orders, icon: <ShoppingBag size={20}/>, color: "#C8A2FF" },
-                { label: "Products", value: stats.loading ? "—" : stats.products, icon: <Package size={20}/>, color: "#D4A017" },
+                { label: "Products", value: stats.loading ? "—" : cachedProducts.length, icon: <Package size={20}/>, color: "#D4A017" },
                 { label: "Customers", value: stats.loading ? "—" : stats.customers, icon: <Users size={20}/>, color: "#4caf50" },
               ].map((s) => (
                 <div key={s.label} className={`card ${styles.statCard}`}>

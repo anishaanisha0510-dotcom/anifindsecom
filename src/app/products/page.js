@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 import ProductCard from "@/components/ProductCard/ProductCard";
 import { SlidersHorizontal, X } from "lucide-react";
+import { useProductsCache } from "@/hooks/useProductsCache";
 import styles from "./page.module.css";
 
 const SORT_OPTIONS = [
@@ -19,28 +20,24 @@ function ProductsContent() {
   const catParam = searchParams.get("category") || "all";
   const filterParam = searchParams.get("filter") || "";
 
-  const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [loadingProds, setLoadingProds] = useState(true);
   const [activeCategory, setActiveCategory] = useState(catParam);
+
+  const { products: allProducts, loading: loadingProds } = useProductsCache();
   const [sort, setSort] = useState(filterParam === "new" ? "latest" : "popularity");
   const [maxPrice, setMaxPrice] = useState(5000);
   const [filterOpen, setFilterOpen] = useState(false);
 
   useEffect(() => {
-    const load = async () => {
-      setLoadingProds(true);
+    const loadCategories = async () => {
       try {
         const { collection, getDocs } = await import("firebase/firestore");
         const { db } = await import("@/lib/firebase");
-        const prodSnap = await getDocs(collection(db, "products"));
-        setAllProducts(prodSnap.docs.map(d => ({ id: d.id, ...d.data() })));
         const catSnap = await getDocs(collection(db, "categories"));
         setCategories(catSnap.docs.map(d => ({ id: d.id, ...d.data() })));
       } catch (e) { console.error(e); }
-      setLoadingProds(false);
     };
-    load();
+    loadCategories();
   }, []);
 
   // Update active category if URL param changes
