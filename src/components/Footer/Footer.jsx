@@ -15,7 +15,7 @@ export default function Footer() {
           <p className={styles.tagline}>fashion & jewellery</p>
           <p className={styles.desc}>Affordable, cute fashion accessories and jewellery for young women across India.</p>
           <div className={styles.socials}>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" id="footer-instagram" aria-label="Instagram" className={styles.socialIcon}><Camera size={17} strokeWidth={1.5} /></a>
+            <a href="https://www.instagram.com/ani_finds20/" target="_blank" rel="noreferrer" id="footer-instagram" aria-label="Instagram" className={styles.socialIcon}><Camera size={17} strokeWidth={1.5} /></a>
             <a href="https://facebook.com" target="_blank" rel="noreferrer" id="footer-facebook" aria-label="Facebook" className={styles.socialIcon}><Share2 size={17} strokeWidth={1.5} /></a>
             <a href="https://youtube.com" target="_blank" rel="noreferrer" id="footer-youtube" aria-label="YouTube" className={styles.socialIcon}><Play size={17} strokeWidth={1.5} /></a>
           </div>
@@ -49,11 +49,11 @@ export default function Footer() {
         <div className={styles.col}>
           <h4 className={styles.colTitle}>Contact</h4>
           <div className={styles.contacts}>
-            <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer" className={styles.contactItem}>
+            <a href="https://wa.me/919884579457" target="_blank" rel="noreferrer" className={styles.contactItem}>
               <Phone size={14} strokeWidth={1.5} /> WhatsApp Us
             </a>
-            <a href="mailto:hello@anifinds.in" className={styles.contactItem}>
-              <Mail size={14} strokeWidth={1.5} /> hello@anifinds.in
+            <a href="mailto:anishaanisha0510@gmail.com" className={styles.contactItem}>
+              <Mail size={14} strokeWidth={1.5} /> anishaanisha0510@gmail.com
             </a>
             <div className={styles.contactItem} style={{ cursor: "default" }}>
               <MapPin size={14} strokeWidth={1.5} /> India

@@ -301,7 +301,7 @@ export default function HomePage() {
             <p className={styles.igPre}>Follow us</p>
             <h2 className={styles.igTitle}>@ani.finds</h2>
             <p className={styles.igSub}>Tag us for a chance to be featured on our page</p>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer" className={styles.igBtn} id="instagram-follow-btn">
+            <a href="https://www.instagram.com/ani_finds20/" target="_blank" rel="noreferrer" className={styles.igBtn} id="instagram-follow-btn">
               Follow on Instagram <ArrowRight size={14} />
             </a>
           </div>
