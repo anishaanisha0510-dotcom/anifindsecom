@@ -265,6 +265,126 @@
   max-height: calc(90vh - 60px);
 }
 
+.orderModal {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 760px;
+  width: 100%;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.orderModalBody {
+  padding: 18px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow-y: auto;
+}
+
+.orderSummaryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+}
+
+.orderSummaryItem {
+  background: #fafafa;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.orderSummaryItem span,
+.orderPaymentRow span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--text-muted);
+}
+
+.orderSummaryItem strong,
+.orderPaymentRow strong {
+  font-size: 14px;
+  color: var(--text-dark);
+}
+
+.orderSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.orderSectionTitle {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.orderItemsList {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.orderItemRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.orderItemRow:last-child { border-bottom: none; }
+
+.orderItemName {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.orderItemMeta {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.orderAddressCard {
+  background: #fdf8fa;
+  border: 1px solid #f0e6ec;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-dark);
+}
+
+.orderPaymentRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fafafa;
+}
+
+.orderEmptyState {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 2px 2px 0;
+}
+
 /* ── Settings Tab ── */
 .settingsGrid {
   display: grid;

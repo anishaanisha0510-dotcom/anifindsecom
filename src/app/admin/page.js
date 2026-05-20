@@ -62,6 +62,7 @@ export default function AdminPage() {
   const [paymentsLoading, setPaymentsLoading] = useState(false);
   const [payFilter, setPayFilter] = useState("pending_verification");
   const [viewScreenshot, setViewScreenshot] = useState(null);
+  const [viewOrder, setViewOrder] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
 
   // Settings tab state
@@ -293,6 +294,99 @@ export default function AdminPage() {
               <button onClick={() => setViewScreenshot(null)} className={styles.modalClose}><X size={18} /></button>
             </div>
             <img src={viewScreenshot.url} alt="Payment proof" className={styles.modalImg} />
+          </div>
+        </div>
+      )}
+
+      {viewOrder && (
+        <div className={styles.modal} onClick={() => setViewOrder(null)}>
+          <div className={styles.orderModal} onClick={(e) => e.stopPropagation()}>
+            <div className={styles.modalHeader}>
+              <span>Order Details — {viewOrder.orderId || viewOrder.firestoreId}</span>
+              <button onClick={() => setViewOrder(null)} className={styles.modalClose}><X size={18} /></button>
+            </div>
+            <div className={styles.orderModalBody}>
+              <div className={styles.orderSummaryGrid}>
+                <div className={styles.orderSummaryItem}>
+                  <span>Customer</span>
+                  <strong>{viewOrder.shippingAddress?.name || "—"}</strong>
+                </div>
+                <div className={styles.orderSummaryItem}>
+                  <span>Phone</span>
+                  <strong>{viewOrder.shippingAddress?.phone || "—"}</strong>
+                </div>
+                <div className={styles.orderSummaryItem}>
+                  <span>Total</span>
+                  <strong>₹{viewOrder.total || 0}</strong>
+                </div>
+                <div className={styles.orderSummaryItem}>
+                  <span>Payment</span>
+                  <strong style={{ textTransform: "capitalize" }}>{viewOrder.paymentMethod?.replace("_", " ") || "—"}</strong>
+                </div>
+                <div className={styles.orderSummaryItem}>
+                  <span>Status</span>
+                  <strong style={{ textTransform: "capitalize" }}>{viewOrder.orderStatus || "pending"}</strong>
+                </div>
+                <div className={styles.orderSummaryItem}>
+                  <span>Date</span>
+                  <strong>{viewOrder.createdAt ? new Date(viewOrder.createdAt).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) : "—"}</strong>
+                </div>
+              </div>
+
+              <div className={styles.orderSection}>
+                <p className={styles.orderSectionTitle}>Items</p>
+                <div className={styles.orderItemsList}>
+                  {viewOrder.products?.length ? (
+                    viewOrder.products.map((product, index) => (
+                      <div key={index} className={styles.orderItemRow}>
+                        <div>
+                          <p className={styles.orderItemName}>{product.emoji || "💍"} {product.title}</p>
+                          <p className={styles.orderItemMeta}>Qty {product.quantity || 1}</p>
+                        </div>
+                        <strong>₹{((product.offerPrice || product.price || 0) * (product.quantity || 1)).toLocaleString("en-IN")}</strong>
+                      </div>
+                    ))
+                  ) : (
+                    <p className={styles.orderEmptyState}>No items found.</p>
+                  )}
+                </div>
+              </div>
+
+              <div className={styles.orderSection}>
+                <p className={styles.orderSectionTitle}>Delivery Address</p>
+                {viewOrder.shippingAddress ? (
+                  <div className={styles.orderAddressCard}>
+                    <p>{viewOrder.shippingAddress.name}</p>
+                    <p>{viewOrder.shippingAddress.phone}</p>
+                    <p>{viewOrder.shippingAddress.address}</p>
+                    <p>{viewOrder.shippingAddress.city}, {viewOrder.shippingAddress.state} - {viewOrder.shippingAddress.pincode}</p>
+                  </div>
+                ) : (
+                  <p className={styles.orderEmptyState}>No address available.</p>
+                )}
+              </div>
+
+              <div className={styles.orderSection}>
+                <p className={styles.orderSectionTitle}>Payment</p>
+                <div className={styles.orderPaymentRow}>
+                  <span>Method</span>
+                  <strong style={{ textTransform: "capitalize" }}>{viewOrder.paymentMethod?.replace("_", " ") || "—"}</strong>
+                </div>
+                <div className={styles.orderPaymentRow}>
+                  <span>Payment Status</span>
+                  <strong style={{ textTransform: "capitalize" }}>{viewOrder.paymentStatus?.replace("_", " ") || "pending"}</strong>
+                </div>
+                {viewOrder.paymentScreenshot && (
+                  <button
+                    className={styles.viewScreenshotBtn}
+                    onClick={() => setViewScreenshot({ url: viewOrder.paymentScreenshot, orderId: viewOrder.orderId || viewOrder.firestoreId })}
+                    id={`detail-view-screenshot-${viewOrder.firestoreId}`}
+                  >
+                    <Eye size={14} /> View Payment Screenshot
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -545,7 +639,7 @@ export default function AdminPage() {
             ) : (
               <div className="card" style={{ overflow: "hidden" }}>
                 <table className={styles.table}>
-                  <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th></tr></thead>
+                  <thead><tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
                   <tbody>
                     {(orderFilter === "All" ? allOrders : allOrders.filter(o => o.orderStatus === orderFilter)).map((o) => (
                       <tr key={o.firestoreId}>
@@ -568,6 +662,16 @@ export default function AdminPage() {
                           </select>
                         </td>
                         <td style={{fontSize:12,color:"var(--text-muted)"}}>{o.createdAt ? new Date(o.createdAt).toLocaleDateString("en-IN",{day:"2-digit",month:"short"}) : "—"}</td>
+                         <td>
+                           <button
+                             className={styles.actionBtn}
+                             onClick={() => setViewOrder(o)}
+                             id={`view-order-${o.firestoreId}`}
+                             title="View order details"
+                           >
+                             <Eye size={14} />
+                           </button>
+                         </td>
                       </tr>
                     ))}
                   </tbody>
