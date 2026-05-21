@@ -771,7 +771,7 @@ export default function AdminPage() {
                       onChange={(e) => handleSettingsChange("upi", e.target.value)}
                       className={styles.settingsInput}
                     />
-                    <span className={styles.settingsExample}>Example: anishop@okicici, 9876543210@paytm</span>
+                    <span className={styles.settingsExample}>Example: anishop@okicici, 8939127247]]]]]@paytm</span>
                   </div>
                   <div className={styles.settingsField}>
                     <label>Account Name <span className={styles.required}>*</span></label>
@@ -801,12 +801,12 @@ export default function AdminPage() {
                     <input
                       id="settings-whatsapp"
                       type="text"
-                      placeholder="919876543210"
+                      placeholder="918939127247"
                       value={settings.whatsapp}
                       onChange={(e) => handleSettingsChange("whatsapp", e.target.value.replace(/\D/g, ""))}
                       className={styles.settingsInput}
                     />
-                    <span className={styles.settingsExample}>Format: 91 followed by 10-digit number (e.g. 919876543210)</span>
+                    <span className={styles.settingsExample}>Format: 91 followed by 10-digit number (e.g. 918939127247]]]]])</span>
                   </div>
                 </div>
 

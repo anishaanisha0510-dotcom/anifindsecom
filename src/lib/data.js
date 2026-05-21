@@ -34,4 +34,4 @@ export const COUPONS = {
   WHOLESALE20: { type: "percent", value: 20, minCart: 2000, label: "20% Wholesale Discount" },
 };
 
-export const WHATSAPP_NUMBER = "919876543210"; // Replace with real number
+export const WHATSAPP_NUMBER = "918939127247"; // Replace with real number

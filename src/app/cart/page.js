@@ -84,7 +84,7 @@ export default function CartPage() {
                   <h3 className={styles.itemTitle}>{item.title}</h3>
                   {item.variant && (
                     <p style={{ fontSize: 12, color: "var(--text-muted)" }}>
-                      {item.variant.color && `Color: ${item.variant.color}`}
+                      {[item.variant.color && `Color: ${item.variant.color}`, item.variant.size && `Size: ${item.variant.size}`].filter(Boolean).join(" • ")}
                     </p>
                   )}
                   <div className={styles.itemBottom}>

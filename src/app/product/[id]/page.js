@@ -26,6 +26,8 @@ export default function ProductDetailPage() {
   const [pincodeMsg, setPincodeMsg] = useState("");
   const [activeTab, setActiveTab] = useState("Description");
   const [activeImageIdx, setActiveImageIdx] = useState(0);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
 
   useEffect(() => {
     async function fetchProduct() {
@@ -48,6 +50,14 @@ export default function ProductDetailPage() {
     }
     if (id) fetchProduct();
   }, [id]);
+
+  useEffect(() => {
+    const availableColors = Array.isArray(product?.colors) ? product.colors : [];
+    const availableSizes = Array.isArray(product?.sizes) ? product.sizes : [];
+
+    setSelectedColor(availableColors[0]?.name || availableColors[0]?.hex || availableColors[0] || "");
+    setSelectedSize(availableSizes[0] || "");
+  }, [product]);
 
   if (loading) {
     return (
@@ -77,6 +87,8 @@ export default function ProductDetailPage() {
   const wishlisted = isWishlisted(product.id);
   const discount = Math.round(((product.price - product.offerPrice) / product.price) * 100) || 0;
   const related = MOCK_PRODUCTS.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 4);
+  const availableColors = Array.isArray(product.colors) ? product.colors : [];
+  const availableSizes = Array.isArray(product.sizes) ? product.sizes : [];
 
   const images = product.images?.length > 0 
     ? product.images 
@@ -85,17 +97,41 @@ export default function ProductDetailPage() {
       : null;
 
   const handleAddToCart = () => {
-    addToCart(product, qty);
+    const variant = {};
+
+    if (availableColors.length > 0 && selectedColor) {
+      variant.color = selectedColor;
+    }
+
+    if (availableSizes.length > 0 && selectedSize) {
+      variant.size = selectedSize;
+    }
+
+    addToCart(product, qty, Object.keys(variant).length > 0 ? variant : null);
     toast.success("Added to cart! 🛍", { className: "toast-pink" });
   };
 
   const handleBuyNow = () => {
-    addToCart(product, qty);
+    const variant = {};
+
+    if (availableColors.length > 0 && selectedColor) {
+      variant.color = selectedColor;
+    }
+
+    if (availableSizes.length > 0 && selectedSize) {
+      variant.size = selectedSize;
+    }
+
+    addToCart(product, qty, Object.keys(variant).length > 0 ? variant : null);
     window.location.href = "/checkout";
   };
 
   const handleWhatsApp = () => {
-    const msg = encodeURIComponent(`Hi! I want to order: ${product.title} (Qty: ${qty}) — ₹${product.offerPrice * qty}`);
+    const variantParts = [];
+    if (selectedColor) variantParts.push(`Color: ${selectedColor}`);
+    if (selectedSize) variantParts.push(`Size: ${selectedSize}`);
+    const variantText = variantParts.length > 0 ? ` (${variantParts.join(", ")})` : "";
+    const msg = encodeURIComponent(`Hi! I want to order: ${product.title}${variantText} (Qty: ${qty}) — ₹${product.offerPrice * qty}`);
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
   };
 
@@ -185,6 +221,69 @@ export default function ProductDetailPage() {
 
             {product.stock <= 5 && (
               <p className={styles.stockWarn}>🔥 Only {product.stock} left in stock — order soon!</p>
+            )}
+
+            {(availableColors.length > 0 || availableSizes.length > 0) && (
+              <div className={styles.variants}>
+                {availableColors.length > 0 && (
+                  <div className={styles.variantGroup}>
+                    <span className="form-label" style={{ marginBottom: 0 }}>Color</span>
+                    <div className={styles.variantRow}>
+                      {availableColors.map((color, index) => {
+                        const colorName = typeof color === "string" ? color : color.name || color.hex || `Color ${index + 1}`;
+                        const colorHex = typeof color === "string" ? "#e8527f" : color.hex || "#e8527f";
+                        const isSelected = selectedColor === colorName || selectedColor === colorHex;
+
+                        return (
+                          <button
+                            key={`${colorHex}-${index}`}
+                            type="button"
+                            className={styles.colorChip}
+                            onClick={() => setSelectedColor(colorName)}
+                            aria-label={`Select ${colorName}`}
+                            aria-pressed={isSelected}
+                            style={{
+                              borderColor: isSelected ? "#e8527f" : "var(--border)",
+                              boxShadow: isSelected ? "0 0 0 3px #fce8f0" : "none",
+                            }}
+                          >
+                            <span className={styles.colorSwatch} style={{ background: colorHex }} />
+                            <span>{colorName}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {availableSizes.length > 0 && (
+                  <div className={styles.variantGroup}>
+                    <span className="form-label" style={{ marginBottom: 0 }}>Size</span>
+                    <div className={styles.variantRow}>
+                      {availableSizes.map((size) => {
+                        const isSelected = selectedSize === size;
+
+                        return (
+                          <button
+                            key={size}
+                            type="button"
+                            className={styles.sizeChip}
+                            onClick={() => setSelectedSize(size)}
+                            aria-pressed={isSelected}
+                            style={{
+                              borderColor: isSelected ? "#e8527f" : "var(--border)",
+                              background: isSelected ? "#fff0f5" : "white",
+                              color: isSelected ? "#e8527f" : "var(--text-dark)",
+                            }}
+                          >
+                            {size}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
 
             {/* Quantity */}

@@ -35,6 +35,34 @@
 .offerPrice { font-size: 28px; font-weight: 700; color: var(--text-dark); }
 .originalPrice { font-size: 16px; color: var(--text-muted); text-decoration: line-through; }
 .stockWarn { color: #e8527f; font-size: 13px; font-weight: 600; background: #fff0f4; padding: 8px 14px; border-radius: var(--radius-sm); border-left: 3px solid #e8527f; }
+.variants { display: flex; flex-direction: column; gap: 14px; }
+.variantGroup { display: flex; flex-direction: column; gap: 8px; }
+.variantRow { display: flex; flex-wrap: wrap; gap: 10px; }
+.colorChip,
+.sizeChip {
+  min-height: 40px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: white;
+  padding: 8px 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-dark);
+  transition: var(--transition);
+}
+.colorChip:hover,
+.sizeChip:hover { border-color: var(--pink); }
+.colorSwatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
 .qtyRow { display: flex; align-items: center; gap: 16px; }
 .qtyControls { display: flex; align-items: center; gap: 0; border: 1.5px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
 .qtyBtn { width: 38px; height: 38px; background: var(--light-pink); border: none; cursor: pointer; font-size: 18px; font-weight: 600; color: var(--text-dark); transition: background 0.2s; }
