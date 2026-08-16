@@ -55,7 +55,15 @@ export default function ProductDetailPage() {
     const availableColors = Array.isArray(product?.colors) ? product.colors : [];
     const availableSizes = Array.isArray(product?.sizes) ? product.sizes : [];
 
-    setSelectedColor(availableColors[0]?.name || availableColors[0]?.hex || availableColors[0] || "");
+    // Normalize: use name if object, else hex, else string value
+    const firstColor = availableColors[0];
+    const firstColorKey = firstColor
+      ? typeof firstColor === "string"
+        ? firstColor
+        : (firstColor.name && firstColor.name.trim() !== "" ? firstColor.name : firstColor.hex || "")
+      : "";
+
+    setSelectedColor(firstColorKey);
     setSelectedSize(availableSizes[0] || "");
   }, [product]);
 
@@ -87,8 +95,16 @@ export default function ProductDetailPage() {
   const wishlisted = isWishlisted(product.id);
   const discount = Math.round(((product.price - product.offerPrice) / product.price) * 100) || 0;
   const related = MOCK_PRODUCTS.filter((p) => p.id !== product.id && p.category === product.category).slice(0, 4);
+  // Normalize colors: support both string[] and {name,hex}[]
   const availableColors = Array.isArray(product.colors) ? product.colors : [];
   const availableSizes = Array.isArray(product.sizes) ? product.sizes : [];
+
+  // Helper: get the display key for a color (used for selection tracking)
+  const getColorKey = (color) => {
+    if (!color) return "";
+    if (typeof color === "string") return color;
+    return color.name && color.name.trim() !== "" ? color.name : (color.hex || "");
+  };
 
   const images = product.images?.length > 0 
     ? product.images 
@@ -230,25 +246,27 @@ export default function ProductDetailPage() {
                     <span className="form-label" style={{ marginBottom: 0 }}>Color</span>
                     <div className={styles.variantRow}>
                       {availableColors.map((color, index) => {
-                        const colorName = typeof color === "string" ? color : color.name || color.hex || `Color ${index + 1}`;
-                        const colorHex = typeof color === "string" ? "#e8527f" : color.hex || "#e8527f";
-                        const isSelected = selectedColor === colorName || selectedColor === colorHex;
+                        const colorKey = getColorKey(color);
+                        const colorHex = typeof color === "string" ? "#e8527f" : (color.hex || "#e8527f");
+                        const colorLabel = typeof color === "string" ? color : (color.name && color.name.trim() !== "" ? color.name : `Color ${index + 1}`);
+                        const isSelected = selectedColor === colorKey;
 
                         return (
                           <button
-                            key={`${colorHex}-${index}`}
+                            key={`${colorKey}-${index}`}
                             type="button"
                             className={styles.colorChip}
-                            onClick={() => setSelectedColor(colorName)}
-                            aria-label={`Select ${colorName}`}
+                            onClick={() => setSelectedColor(colorKey)}
+                            aria-label={`Select ${colorLabel}`}
                             aria-pressed={isSelected}
                             style={{
                               borderColor: isSelected ? "#e8527f" : "var(--border)",
                               boxShadow: isSelected ? "0 0 0 3px #fce8f0" : "none",
+                              background: isSelected ? "#fff0f5" : "white",
                             }}
                           >
                             <span className={styles.colorSwatch} style={{ background: colorHex }} />
-                            <span>{colorName}</span>
+                            <span>{colorLabel}</span>
                           </button>
                         );
                       })}
