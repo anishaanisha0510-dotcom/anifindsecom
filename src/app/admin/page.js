@@ -341,7 +341,19 @@ export default function AdminPage() {
                       <div key={index} className={styles.orderItemRow}>
                         <div>
                           <p className={styles.orderItemName}>{product.emoji || "💍"} {product.title}</p>
-                          <p className={styles.orderItemMeta}>Qty {product.quantity || 1}</p>
+                          <p className={styles.orderItemMeta}>
+                            Qty {product.quantity || 1}
+                            {product.variant?.color && (
+                              <span style={{ marginLeft: 8, background: "#fff0f5", color: "#e8527f", borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 700 }}>
+                                🎨 {product.variant.color}
+                              </span>
+                            )}
+                            {product.variant?.size && (
+                              <span style={{ marginLeft: 6, background: "#f0f4ff", color: "#3b82f6", borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 700 }}>
+                                📏 {product.variant.size}
+                              </span>
+                            )}
+                          </p>
                         </div>
                         <strong>₹{((product.offerPrice || product.price || 0) * (product.quantity || 1)).toLocaleString("en-IN")}</strong>
                       </div>
@@ -562,7 +574,19 @@ export default function AdminPage() {
                       {order.products?.length > 0 && (
                         <div className={styles.payCardItems}>
                           {order.products.map((p, i) => (
-                            <span key={i} className={styles.payItem}>{p.emoji || "💍"} {p.title} ×{p.quantity}</span>
+                            <span key={i} className={styles.payItem}>
+                              {p.emoji || "💍"} {p.title} ×{p.quantity}
+                              {p.variant?.color && (
+                                <span style={{ marginLeft: 6, background: "#fff0f5", color: "#e8527f", borderRadius: 6, padding: "1px 7px", fontSize: 11, fontWeight: 700 }}>
+                                  🎨 {p.variant.color}
+                                </span>
+                              )}
+                              {p.variant?.size && (
+                                <span style={{ marginLeft: 4, background: "#f0f4ff", color: "#3b82f6", borderRadius: 6, padding: "1px 7px", fontSize: 11, fontWeight: 700 }}>
+                                  📏 {p.variant.size}
+                                </span>
+                              )}
+                            </span>
                           ))}
                         </div>
                       )}
@@ -645,7 +669,31 @@ export default function AdminPage() {
                       <tr key={o.firestoreId}>
                         <td style={{ fontWeight: 600, fontSize: 12 }}>{o.orderId || o.firestoreId?.slice(0,10)}</td>
                         <td><div><p style={{fontWeight:600,fontSize:13}}>{o.shippingAddress?.name || "—"}</p><p style={{fontSize:11,color:"var(--text-muted)"}}>{o.shippingAddress?.phone}</p></div></td>
-                        <td>{o.products?.length || 0} items</td>
+                        <td>
+                          {o.products?.length > 0 ? (
+                            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                              {o.products.map((p, i) => (
+                                <div key={i} style={{ fontSize: 12 }}>
+                                  <span style={{ fontWeight: 600 }}>{p.emoji || "💍"} {p.title} ×{p.quantity}</span>
+                                  {(p.variant?.color || p.variant?.size) && (
+                                    <div style={{ marginTop: 2, display: "flex", gap: 4, flexWrap: "wrap" }}>
+                                      {p.variant?.color && (
+                                        <span style={{ background: "#fff0f5", color: "#e8527f", borderRadius: 6, padding: "1px 7px", fontSize: 11, fontWeight: 700 }}>
+                                          🎨 {p.variant.color}
+                                        </span>
+                                      )}
+                                      {p.variant?.size && (
+                                        <span style={{ background: "#f0f4ff", color: "#3b82f6", borderRadius: 6, padding: "1px 7px", fontSize: 11, fontWeight: 700 }}>
+                                          📏 {p.variant.size}
+                                        </span>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          ) : "—"}
+                        </td>
                         <td style={{ fontWeight: 700 }}>₹{o.total}</td>
                         <td><span className={o.paymentStatus === "verified" || o.paymentStatus === "paid" ? styles.paidBadge : styles.codBadge} style={{textTransform:"capitalize"}}>{o.paymentMethod || "—"}</span></td>
                         <td>
