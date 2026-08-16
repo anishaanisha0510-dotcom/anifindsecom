@@ -21,6 +21,7 @@ export default function ProductDetailPage() {
   
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState(false);
   const [qty, setQty] = useState(1);
   const [pincode, setPincode] = useState("");
   const [pincodeMsg, setPincodeMsg] = useState("");
@@ -29,25 +30,32 @@ export default function ProductDetailPage() {
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
 
-  useEffect(() => {
-    async function fetchProduct() {
-      setLoading(true);
-      try {
-        const { doc, getDoc } = await import("firebase/firestore");
-        const { db } = await import("@/lib/firebase");
-        const snap = await getDoc(doc(db, "products", id));
-        if (snap.exists()) {
-          setProduct({ id: snap.id, ...snap.data() });
-        } else {
-          // fallback to mock for backward compatibility
-          const mock = MOCK_PRODUCTS.find((p) => p.id === id);
-          if (mock) setProduct(mock);
-        }
-      } catch (e) {
-        console.error(e);
+  const fetchProduct = async () => {
+    setLoading(true);
+    setFetchError(false);
+    try {
+      const { doc, getDoc } = await import("firebase/firestore");
+      const { db } = await import("@/lib/firebase");
+      const snap = await getDoc(doc(db, "products", id));
+      if (snap.exists()) {
+        setProduct({ id: snap.id, ...snap.data() });
+      } else {
+        // fallback to mock data
+        const mock = MOCK_PRODUCTS.find((p) => p.id === id);
+        if (mock) setProduct(mock);
+        else setFetchError(true);
       }
-      setLoading(false);
+    } catch (e) {
+      console.error("Product fetch error:", e);
+      // Try mock fallback on error too
+      const mock = MOCK_PRODUCTS.find((p) => p.id === id);
+      if (mock) setProduct(mock);
+      else setFetchError(true);
     }
+    setLoading(false);
+  };
+
+  useEffect(() => {
     if (id) fetchProduct();
   }, [id]);
 
@@ -79,13 +87,30 @@ export default function ProductDetailPage() {
     );
   }
 
-  if (!product) {
+  if (fetchError || !product) {
     return (
       <div className="page-wrapper">
         <Navbar />
-        <div className="container" style={{ paddingTop: 40, textAlign: "center" }}>
-          <h2>Product not found</h2>
-          <Link href="/products" className="btn-primary" style={{ display: "inline-flex", marginTop: 20 }}>Continue Shopping</Link>
+        <div className="container" style={{ paddingTop: 60, textAlign: "center", maxWidth: 480, margin: "0 auto" }}>
+          <div style={{ fontSize: 64, marginBottom: 16 }}>😕</div>
+          <h2 style={{ marginBottom: 10 }}>{fetchError ? "Couldn't load product" : "Product not found"}</h2>
+          <p style={{ color: "var(--text-muted)", marginBottom: 28 }}>
+            {fetchError
+              ? "There was an error loading this product. Please check your connection and try again."
+              : "This product may have been removed or the link is invalid."}
+          </p>
+          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+            {fetchError && (
+              <button
+                className="btn-primary"
+                onClick={fetchProduct}
+                style={{ display: "inline-flex", gap: 8 }}
+              >
+                🔄 Try Again
+              </button>
+            )}
+            <Link href="/products" className="btn-outline" style={{ display: "inline-flex" }}>Continue Shopping</Link>
+          </div>
         </div>
         <Footer />
       </div>
