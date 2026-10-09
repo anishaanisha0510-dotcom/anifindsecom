@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Save, ImageIcon, PlayCircle, Link2, X, CheckCircle, Eye, Trash2 } from "lucide-react";
 import styles from "./manager.module.css";
+import { compressImageToBase64 } from "@/lib/imageUtils";
 
 /* ── YouTube URL → embed URL ── */
 function toYouTubeEmbed(url) {
@@ -68,13 +69,15 @@ export default function HeroBannerManager() {
     setLoading(false);
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) { alert("Image must be under 2MB"); return; }
-    const reader = new FileReader();
-    reader.onload = ev => setImageBase64(ev.target.result);
-    reader.readAsDataURL(file);
+    try {
+      const base64 = await compressImageToBase64(file, { maxWidth: 1400, maxHeight: 800, quality: 0.8 });
+      setImageBase64(base64);
+    } catch (err) {
+      alert("Failed to process image: " + err.message);
+    }
   };
 
   const saveHero = async () => {
@@ -149,7 +152,7 @@ export default function HeroBannerManager() {
       {mediaType === "image_url" && (
         <div style={{ background: "white", border: "1px solid #f0e6ec", borderRadius: 16, padding: 20, marginBottom: 16 }}>
           <p style={{ fontSize: 13, fontWeight: 700, color: "#555", marginBottom: 10 }}>Paste Image Link / URL</p>
-          <p style={{ fontSize: 12, color: "#aaa", marginBottom: 12 }}>Use any direct image URL (Google Drive public link, Imgur, Cloudinary, etc.)</p>
+          <p style={{ fontSize: 12, color: "#aaa", marginBottom: 12 }}>Use any direct image URL (Google Drive public link, Imgur, Firebase Storage, etc.)</p>
           <div style={{ display: "flex", gap: 8 }}>
             <input type="url" placeholder="https://example.com/your-banner-image.jpg"
               value={imageUrl} onChange={e => setImageUrl(e.target.value)}

@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Plus, Trash2, Edit2, ImageIcon, X, Save, Heart, RefreshCw, Palette, Ruler, Loader2 } from "lucide-react";
 import styles from "./manager.module.css";
-import { uploadToCloudinary } from "@/lib/cloudinary";
+import { compressImageToBase64 } from "@/lib/imageUtils";
 
 const SIZE_PRESETS = ["XS", "S", "M", "L", "XL", "XXL", "Free Size", "6", "7", "8", "9", "10"];
 const COLOR_PRESETS = [
@@ -124,48 +124,42 @@ export default function ProductManager() {
     setShowForm(true);
   };
 
-  const handleImage = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { alert("Image must be under 5MB"); return; }
-    if ((form.images || []).length >= 4) { alert("Maximum 4 images allowed per product"); return; }
+  const processFiles = async (files) => {
+    if (!files || files.length === 0) return;
+    const currentImages = form.images || [];
+    const remainingSlots = 4 - currentImages.length;
+    if (remainingSlots <= 0) {
+      alert("Maximum 4 images allowed per product");
+      return;
+    }
 
-    setUploadingCount(c => c + 1);
+    const filesToProcess = Array.from(files)
+      .filter(f => f.type.startsWith("image/"))
+      .slice(0, remainingSlots);
+
+    if (filesToProcess.length === 0) return;
+
+    setUploadingCount(c => c + filesToProcess.length);
     try {
-      const { url } = await uploadToCloudinary(file);
-      setForm(f => ({ ...f, images: [...(f.images || []), url] }));
+      const base64List = await Promise.all(
+        filesToProcess.map(file => compressImageToBase64(file, { maxWidth: 900, maxHeight: 900, quality: 0.75 }))
+      );
+      setForm(f => ({ ...f, images: [...(f.images || []), ...base64List] }));
       if (fileRef.current) fileRef.current.value = "";
     } catch (err) {
-      // If Cloudinary not yet configured, fall back to Base64 preview with a warning
-      if (err.message?.includes("not configured")) {
-        alert(
-          "⚠️ Cloudinary is not set up yet.\n\n" +
-          "To enable cloud image storage:\n" +
-          "1. Sign up at cloudinary.com (free)\n" +
-          "2. Create an unsigned upload preset\n" +
-          "3. Add NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET to .env.local\n\n" +
-          "Falling back to Base64 (for testing only — avoid on production)."
-        );
-        // Base64 fallback for local testing
-        const reader = new FileReader();
-        reader.onload = ev => {
-          setForm(f => ({ ...f, images: [...(f.images || []), ev.target.result] }));
-          if (fileRef.current) fileRef.current.value = "";
-        };
-        reader.readAsDataURL(file);
-      } else {
-        alert("Upload failed: " + err.message);
-      }
+      alert("Image processing failed: " + err.message);
     } finally {
-      setUploadingCount(c => c - 1);
+      setUploadingCount(0);
     }
+  };
+
+  const handleImage = async (e) => {
+    await processFiles(e.target.files);
   };
 
   const handleImageDrop = async (e) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (!file || !file.type.startsWith("image/")) return;
-    await handleImage({ target: { files: [file] } });
+    await processFiles(e.dataTransfer.files);
   };
 
   const addUrlImage = () => {
@@ -327,15 +321,15 @@ export default function ProductManager() {
                         {uploadingCount > 0 ? (
                           <>
                             <Loader2 size={32} color="#e8527f" style={{ animation: "spin 1s linear infinite" }}/>
-                            <span style={{ fontWeight: 700, fontSize: 14, color: "#e8527f" }}>Uploading to Cloudinary…</span>
+                            <span style={{ fontWeight: 700, fontSize: 14, color: "#e8527f" }}>Optimizing &amp; converting to Base64…</span>
                             <small>Please wait</small>
                           </>
                         ) : (
                           <>
                             <ImageIcon size={32} color="#e8527f"/>
                             <span style={{ fontWeight: 700, fontSize: 14 }}>Click or drag &amp; drop to upload</span>
-                            <span style={{ fontSize: 13, color: "#888" }}>({form.images?.length || 0}/4 added) — saved to Cloudinary CDN</span>
-                            <small>JPG · PNG · WebP · Max 5MB per image</small>
+                            <span style={{ fontSize: 13, color: "#888" }}>({form.images?.length || 0}/4 added) — saved as Base64 in Firebase</span>
+                            <small>JPG · PNG · WebP · Auto-optimized Base64</small>
                           </>
                         )}
                       </button>
@@ -360,11 +354,11 @@ export default function ProductManager() {
                           style={{ background: "#e8527f", color: "white", border: "none", borderRadius: 8, padding: "0 16px", cursor: "pointer", fontWeight: 700, fontSize: 13, whiteSpace: "nowrap" }}
                         >+ Add URL</button>
                       </div>
-                      <p style={{ fontSize: 11, color: "#aaa", margin: 0 }}>Paste a direct image link (Imgur, Cloudinary, Firebase Storage, Google Drive public, etc.)</p>
+                      <p style={{ fontSize: 11, color: "#aaa", margin: 0 }}>Paste a direct image link (Firebase Storage, Imgur, Google Drive public, etc.)</p>
                     </div>
                   )}
 
-                  <input ref={fileRef} type="file" accept="image/*" hidden onChange={handleImage}/>
+                  <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={handleImage}/>
                 </>
               ) : (
                 <div style={{ textAlign: "center", padding: "12px 0 4px", fontSize: 12, color: "#e8527f", fontWeight: 600 }}>

@@ -2,6 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Plus, Trash2, Edit2, ImageIcon, X, Save, RefreshCw } from "lucide-react";
 import styles from "./manager.module.css";
+import { compressImageToBase64 } from "@/lib/imageUtils";
 
 const EMOJI_OPTIONS = ["💍","👗","👜","🎀","🧣","🌸","✨","💄","🎁","🛍","📿","🪬","🪮","🧸","💎"];
 
@@ -42,16 +43,16 @@ export default function CategoryManager() {
     setShowForm(true);
   };
 
-  const handleImage = (e) => {
+  const handleImage = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > 500 * 1024) { alert("Image must be under 500KB"); return; }
-    const reader = new FileReader();
-    reader.onload = ev => {
-      setImagePreview(ev.target.result);
-      setForm(f => ({ ...f, imageBase64: ev.target.result }));
-    };
-    reader.readAsDataURL(file);
+    try {
+      const base64 = await compressImageToBase64(file, { maxWidth: 600, maxHeight: 600, quality: 0.8 });
+      setImagePreview(base64);
+      setForm(f => ({ ...f, imageBase64: base64 }));
+    } catch (err) {
+      alert("Failed to process image: " + err.message);
+    }
   };
 
   const handleSave = async () => {
